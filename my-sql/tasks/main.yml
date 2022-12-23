@@ -1,0 +1,17 @@
+---
+- name: Ensure MySQL packages are installed.
+  yum:
+    name: "{{ __mysql_packages }}"
+    state: present
+    enablerepo: "{{ mysql_enablerepo | default(omit, true) }}"
+  register: rh_mysql_install_packages
+
+- name: Check if MySQL packages were installed.
+  set_fact:
+    mysql_install_packages: "{{ (rh_mysql_install_packages is defined and rh_mysql_install_packages.changed) }}"
+
+- name: Get MySQL version.
+  command: 'mysql --version'
+  register: mysql_cli_version
+  changed_when: false
+  check_mode: false  

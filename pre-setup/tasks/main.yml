@@ -1,0 +1,58 @@
+---
+- name: Disable Online Repos
+  block:
+    - name: disable repos
+      command: "subscription-manager repos --disable {{ item }}"
+      with_items:
+      - rhel-8-for-x86_64-appstream-rpms
+      - rhel-8-for-x86_64-baseos-rpms
+
+- name: Remove any DVD Mount first
+  mount:
+    path: /dvd    
+    state: unmounted      
+
+- name: Mount DVD read-only
+  mount:
+    path: /dvd
+    src: /dev/cdrom
+    fstype: auto
+    opts: ro,noauto
+    state: mounted      
+  
+- name: Update Repos
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/yum.repos.d/'
+    owner: root
+    group: root
+    mode: 0644
+  with_fileglob:
+    - files/repos/*
+
+- name: Remove Epel Repo files repos that was created from above
+  shell: rm -rf /etc/yum.repos.d/*epel*
+
+- name: Install epel-release (disble all repos bar epel for this install to prevent .repo files been created)
+  yum:
+    name: epel-release
+    disablerepo: '*'
+    enablerepo: 'dvd-Epel'
+    state: present
+
+- name: Install Open JDK packages
+  yum:
+    name: [java-17-openjdk.x86_64,glibc-langpack-en]
+    exclude: '*-doc.noarch'
+    state: present    
+
+- name: Install Texlive packages
+  yum:
+    name: [texlive]    
+    state: present        
+     
+- name: Install ImageMagick packages
+  yum:
+    name: ImageMagick
+    state: present        
+    exclude: '*-doc.noarch' 

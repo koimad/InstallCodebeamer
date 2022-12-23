@@ -1,0 +1,22 @@
+---
+- name: Install Prerequisites
+  hosts: codebeamer_masters  
+  become: yes
+  roles:
+  - role: pre-setup
+  tags: Prerequisites
+
+- name: Install MySQL
+  hosts: codebeamer_masters
+  become: yes
+  roles:
+  - role: my-sql
+  tags: my-sql
+
+- name: Install CodeBeamer
+  hosts: codebeamer_masters
+  become: yes  
+  roles:
+  - role: codebeamer
+  tags: codebeamer
+
