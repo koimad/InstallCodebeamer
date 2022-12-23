@@ -1,0 +1,19 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: mysql
+  author: bwilkinson
+  description: MySQL server for RHEL.
+  company: ""
+  license: ""
+  min_ansible_version: 2.4
+  platforms:
+    - name: EL
+      versions:        
+        - 8        
+    
+  galaxy_tags:
+    - database
+    - mysql
+    
