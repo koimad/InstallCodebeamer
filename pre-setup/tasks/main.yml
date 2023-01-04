@@ -40,6 +40,9 @@
     enablerepo: 'dvd-Epel'
     state: present
 
+- name: Remove Epel Repo files repos that was created from above
+  shell: rm -rf /etc/yum.repos.d/*epel*
+
 - name: Install Open JDK packages
   yum:
     name: [java-17-openjdk.x86_64,glibc-langpack-en]
@@ -56,3 +59,8 @@
     name: ImageMagick
     state: present        
     exclude: '*-doc.noarch' 
+
+- name: Install python39-PyMySQL packages
+  yum:
+    name: python39-PyMySQL
+    state: present   

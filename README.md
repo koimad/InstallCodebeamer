@@ -2,8 +2,6 @@
 
 This will setup a codebeamer server complete with my-sql
 
-
-
 ## Platform requirements
 The machines required are given below. If you can allocate more compute resources, its better :-
 
@@ -28,7 +26,7 @@ Create ssh keys required for ansible to use certificates for connections over ss
 ```
 ## Update inverntory file
 
-Update the variables etc as required in the inventory file
+Update the variables etc as required in the inventory file and role files
 
 ## Running the Playbook
 
@@ -48,6 +46,6 @@ ask for privilege escalation password
 <br></br>
 ## ToDo
 ```
-    1. ...
+    1. ... Move Data directory https://www.thegeekstuff.com/2016/05/move-mysql-directory/
 ```
 

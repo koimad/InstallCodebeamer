@@ -7,15 +7,16 @@
   tags: Prerequisites
 
 - name: Install MySQL
-  hosts: codebeamer_masters
+  hosts: codebeamer_masters    
   become: yes
   roles:
   - role: my-sql
   tags: my-sql
 
+
 - name: Install CodeBeamer
   hosts: codebeamer_masters
-  become: yes  
+  become: yes
   roles:
   - role: codebeamer
   tags: codebeamer

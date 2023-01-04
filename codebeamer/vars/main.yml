@@ -1,1 +1,5 @@
 ---
+__codebeamer_install_dir: '/home/codebeamer/CB-22.10-SP2'
+__codebeamer_sym_link: '/home/codebeamer/CB'
+__my_sql_connector_name: 'mysql-connector-java-8.0.25.jar'
+__codebeamer_installer: 'CB-22.10-SP2-linux.bin'

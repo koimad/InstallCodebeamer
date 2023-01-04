@@ -8,7 +8,7 @@
 - name: Copy my.cnf global MySQL configuration.
   template:
     src: my.cnf.j2
-    dest: "{{ mysql_config_file }}"
+    dest: "{{ __mysql_config_file }}"
     owner: root
     group: root
     mode: 0644
@@ -17,7 +17,7 @@
 
 - name: Verify mysql include directory exists.
   file:
-    path: "{{ mysql_config_include_dir }}"
+    path: "{{ __mysql_config_include_dir }}"
     state: directory
     owner: root
     group: root
@@ -27,7 +27,7 @@
 - name: Copy my.cnf override files into include directory.
   template:
     src: "{{ item.src }}"
-    dest: "{{ mysql_config_include_dir }}/{{ item.src | basename }}"
+    dest: "{{ __mysql_config_include_dir }}/{{ item.src | basename }}"
     owner: root
     group: root
     mode: 0644
@@ -36,9 +36,9 @@
   notify: restart mysql
 
 - name: Create slow query log file (if configured).
-  command: "touch {{ mysql_slow_query_log_file }}"
+  command: "touch {{ __mysql_slow_query_log_file }}"
   args:
-    creates: "{{ mysql_slow_query_log_file }}"
+    creates: "{{ __mysql_slow_query_log_file }}"
   when: mysql_slow_query_log_enabled
 
 - name: Create datadir if it does not exist
@@ -52,7 +52,7 @@
 
 - name: Set ownership on slow query log file (if configured).
   file:
-    path: "{{ mysql_slow_query_log_file }}"
+    path: "{{ __mysql_slow_query_log_file }}"
     state: file
     owner: mysql
     group: "{{ mysql_log_file_group }}"
@@ -60,26 +60,26 @@
   when: mysql_slow_query_log_enabled
 
 - name: Create error log file (if configured).
-  command: "touch {{ mysql_log_error }}"
+  command: "touch {{ __mysql_log_error }}"
   args:
-    creates: "{{ mysql_log_error }}"
+    creates: "{{ __mysql_log_error }}"
   when:
     - mysql_log | default(true)
-    - mysql_log_error | default(false)
+    - __mysql_log_error | default(false)
   tags: ['skip_ansible_galaxy']
 
 - name: Set ownership on error log file (if configured).
   file:
-    path: "{{ mysql_log_error }}"
+    path: "{{ __mysql_log_error }}"
     state: file
     owner: mysql
     group: "{{ mysql_log_file_group }}"
     mode: 0640
   when:
     - mysql_log | default(true)
-    - mysql_log_error | default(false)
+    - __mysql_log_error | default(false)
   tags: ['skip_ansible_galaxy']
 
 - name: Ensure MySQL is started and enabled on boot.
-  service: "name={{ mysql_daemon }} state=started enabled={{ mysql_enabled_on_startup }}"
+  service: "name={{ __mysql_daemon }} state=started enabled={{ mysql_enabled_on_startup }}"
   register: mysql_service_configuration

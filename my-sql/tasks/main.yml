@@ -1,4 +1,3 @@
----
 - name: Ensure MySQL packages are installed.
   yum:
     name: "{{ __mysql_packages }}"
@@ -21,4 +20,3 @@
 - include_tasks: secure-installation.yml
 - include_tasks: databases.yml
 - include_tasks: users.yml
-#- include_tasks: replication.yml

@@ -1,0 +1,14 @@
+[Unit]
+Description=CodeBeamer ALM Tools
+After=mysqld.service network.target iptables.service firewalld.service firewalld.service httpd.service
+
+[Service]
+Type=forking
+User=codebeamer
+Environment=CB_HOME={{ __codebeamer_sym_link }}
+ExecStart={{ __codebeamer_sym_link }}/bin/startup
+ExecStop={{ __codebeamer_sym_link }}/bin/stop
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
