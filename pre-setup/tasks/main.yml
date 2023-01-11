@@ -36,7 +36,6 @@
 - name: Install epel-release (disble all repos bar epel for this install to prevent .repo files been created)
   yum:
     name: epel-release
-    disablerepo: '*'
     enablerepo: 'dvd-Epel'
     state: present
 
@@ -51,7 +50,7 @@
 
 - name: Install Texlive packages
   yum:
-    name: [texlive]    
+    name: [texlive,texlive-latex,texlive-xetex,texlive-collection-latex,texlive-collection-latexrecommended]    
     state: present        
      
 - name: Install ImageMagick packages
@@ -64,3 +63,20 @@
   yum:
     name: python39-PyMySQL
     state: present   
+
+- name: Install git packages
+  yum:
+    name: git239-2.39.0-0.2.el8.x86_64
+    state: present     
+    allowerasing: true    
+
+- name: Install git-lfs packages
+  yum:
+    name: git-lfs-3.3.0-1.el8.x86_64
+    state: present 
+
+- name: Install SELinux utils
+  yum:
+    name: policycoreutils-devel
+    state: present     
+    

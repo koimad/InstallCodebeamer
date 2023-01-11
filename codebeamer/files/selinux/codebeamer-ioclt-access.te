@@ -1,0 +1,14 @@
+
+module codebeamer-ioclt-access 1.0;
+
+require {
+	type user_home_t;
+	type init_t;
+	class file { create execute execute_no_trans ioctl open read };
+}
+
+#============= init_t ==============
+allow init_t user_home_t:file { create ioctl };
+
+#!!!! This avc is allowed in the current policy
+allow init_t user_home_t:file { execute execute_no_trans open read };

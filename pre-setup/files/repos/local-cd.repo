@@ -18,3 +18,18 @@ baseurl=file:///dvd/epel
 enabled=1
 gpgcheck=1
 gpgkey=file:///dvd/RPM-GPG-KEY-EPEL-8
+
+[dvd-Git]
+name=DVD for Git
+baseurl=file:///dvd/git
+enabled=1
+gpgcheck=1
+gpgkey=file:///dvd/RPM-GPG-KEY-git
+
+[dvd-Git-lfs]
+name=DVD for Git-lfs
+baseurl=file:///dvd/gitlfs
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///dvd/RPM-GPG-KEY-gitlfs
