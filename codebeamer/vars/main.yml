@@ -1,5 +1,5 @@
 ---
-__codebeamer_root_dir: '/home/codebeamer'
+__codebeamer_root_dir: '/apps/codebeamer'
 __codebeamer_install_dir: "{{ ( __codebeamer_root_dir ,'CB-22.10-SP2') | path_join }}"
 __codebeamer_sym_link: "{{ ( __codebeamer_root_dir ,'CB') | path_join }}"
 __my_sql_connector_name: 'mysql-connector-java-8.0.25.jar'

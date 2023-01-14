@@ -48,7 +48,17 @@
     owner: mysql
     group: mysql
     mode: 0755
+   
+- name: Set SEContext of datadir (file did not work)
+  sefcontext:
+    target: "{{ mysql_datadir }}(/.*)?"
+    seuser: system_u
     setype: mysqld_db_t
+    state: present
+    
+- name: Run restore context to reload selinux  
+  command: 
+    cmd: "restorecon -RFvv {{ mysql_datadir }}"
 
 - name: Set ownership on slow query log file (if configured).
   file:

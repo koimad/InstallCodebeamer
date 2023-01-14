@@ -54,10 +54,20 @@
     dest: '{{ __codebeamer_sym_link  }}'    
     state: link
 
+- name: Set SEContext of codebeamer directory
+  sefcontext:
+    target: '{{ __codebeamer_root_dir }}(/.*)?''
+    setype: bin_t
+    state: present
+    
+- name: Run restore context to reload selinux  
+  command: 
+    cmd: 'restorecon -RFvv {{ __codebeamer_root_dir }}''
+
 - name: Copy CodeBeamer File to Codebeamer user folder
   copy:
     src: 'files/{{ __my_sql_connector_name }}'
-    dest: "{{ ( __codebeamer_install_dir ,'tomcat/webapps/cb/WEB-INF/lib', __my_sql_connector_name) | path_join }}"
+    dest: {{ ( __codebeamer_install_dir ,'tomcat/webapps/cb/WEB-INF/lib', __my_sql_connector_name) | path_join }}"
     owner: codebeamer
     group: root
     mode: 0550
@@ -69,26 +79,6 @@
     owner: root
     group: root
     mode: 0444
-
-- name: Copy SELinux policy files
-  copy: 
-    src: files/selinux/
-    dest: selinux-modules/      
-
-- name: find SELinux modules
-  find:
-    paths: selinux-modules
-    file_type: file
-    recurse: No
-    patterns: "*.pp"
-  register: modules_matched
-
-- name: SELinux import modules
-  command:
-    cmd : semodule -X 300 -i {{ item.path }}  
-  loop: '{{ modules_matched.files }}'
-  loop_control:
-    label: '{{ item.path }}'
 
 - name: Enable Codebeamer service
   ansible.builtin.service:
