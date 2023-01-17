@@ -90,10 +90,10 @@
 
 - name: Update  CACERT_KEYSTORE_PATH in cb startup file to fix issue
   ansible.builtin.replace:
-    path:  "{{ ( __codebeamer_install_dir ,'bin/cb', ) | path_join }}"
-    after: 'CACERT_KEYSTORE_PATH='
-    regexp: '^(.+)\n'
-    replace: "{{ ( __codebeamer_install_dir ,'cacerts', ) | path_join }}" 
+    path:  "{{ ( __codebeamer_sym_link ,'bin/cb', ) | path_join }}"
+    after: "CACERT_KEYSTORE_PATH="
+    regexp: '/home/appuser/codebeamer/cacerts'
+    replace: "{{ ( __codebeamer_sym_link ,'cacerts', ) | path_join }}" 
 
 - name: Enable Codebeamer service
   ansible.builtin.service:
