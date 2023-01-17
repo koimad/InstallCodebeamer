@@ -56,21 +56,29 @@
 
 - name: Set SEContext of codebeamer directory
   sefcontext:
-    target: '{{ __codebeamer_root_dir }}(/.*)?''
+    target: '{{ __codebeamer_root_dir }}(/.*)?'
     setype: bin_t
     state: present
     
 - name: Run restore context to reload selinux  
   command: 
-    cmd: 'restorecon -RFvv {{ __codebeamer_root_dir }}''
+    cmd: 'restorecon -RFvv {{ __codebeamer_root_dir }}'
 
 - name: Copy CodeBeamer File to Codebeamer user folder
   copy:
     src: 'files/{{ __my_sql_connector_name }}'
-    dest: {{ ( __codebeamer_install_dir ,'tomcat/webapps/cb/WEB-INF/lib', __my_sql_connector_name) | path_join }}"
+    dest: "{{ ( __codebeamer_install_dir ,'tomcat/webapps/cb/WEB-INF/lib', __my_sql_connector_name) | path_join }}"
     owner: codebeamer
     group: root
     mode: 0550
+
+# - name: Generate keystore
+#   java_keystore:
+#     name: codebeamer
+#     certificate: "{{ lookup('file','files/certificate/codebeamer.public.key')}}"
+#     private_key: "{{ lookup('file','files/certificate/codebeamer.private.key')}}"
+#     password: cb_secret
+#     dest: "{{  (__codebeamer_install_dir ,'keystore' ) | path_join }}"
 
 - name: Copy codebeamer.service to /etc/systemd/system/
   template:
@@ -79,6 +87,13 @@
     owner: root
     group: root
     mode: 0444
+
+- name: Update  CACERT_KEYSTORE_PATH in cb startup file to fix issue
+  ansible.builtin.replace:
+    path:  "{{ ( __codebeamer_install_dir ,'bin/cb', ) | path_join }}"
+    after: 'CACERT_KEYSTORE_PATH='
+    regexp: '^(.+)\n'
+    replace: "{{ ( __codebeamer_install_dir ,'cacerts', ) | path_join }}" 
 
 - name: Enable Codebeamer service
   ansible.builtin.service:

@@ -7,12 +7,6 @@ The machines required are given below. If you can allocate more compute resource
 
     1. Codebeamer Server - 4 vcpu / 16 gib ram
 
-## Setup Hosts DNS Resolution
-
-If you are not using a DNS server it is easier to setup the /etc/ hosts file and copy to all machines with the below command
-
-    scp /etc/hosts root@<ip of machine>:/etc/
-
 ## Setup SSH 
 Create ssh keys required for ansible to use certificates for connections over ssh
 ```
@@ -36,12 +30,21 @@ Update the playbook hosts file as required
   ansible_connection: ssh
 ```
 
+## Create Certificate key strings from generated certificate
+```
+   openssl pkcs12 -in "C:\Temp\codebeamer.pfx" -nocerts -nodes -out "c:\Temp\codebeamer.key"
+   openssl rsa -in "c:\Temp\codebeamer.key" -out "c:\Temp\codebeamer.private.key"
+   openssl rsa -in "c:\Temp\codebeamer.key" -pubout -out "c:\Temp\codebeamer.public.key"       
+```
+
 Command Line to run :-
 ```
     ansible-playbook -i inventory.yaml playbook.yaml -K 
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-K reperesents --ask-become-pass: 
 ask for privilege escalation password
+
+
 
 <br></br>
 ## ToDo
