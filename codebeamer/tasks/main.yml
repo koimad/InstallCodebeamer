@@ -1,5 +1,4 @@
 ---
-
 - name: Add the user 'codebeamer'
   ansible.builtin.user:
     name: codebeamer
@@ -72,14 +71,6 @@
     group: root
     mode: 0550
 
-# - name: Generate keystore
-#   java_keystore:
-#     name: codebeamer
-#     certificate: "{{ lookup('file','files/certificate/codebeamer.public.key')}}"
-#     private_key: "{{ lookup('file','files/certificate/codebeamer.private.key')}}"
-#     password: cb_secret
-#     dest: "{{  (__codebeamer_install_dir ,'keystore' ) | path_join }}"
-
 - name: Copy codebeamer.service to /etc/systemd/system/
   template:
     src: "codebeamer.service.cnf.j2"
@@ -88,16 +79,55 @@
     group: root
     mode: 0444
 
-- name: Update  CACERT_KEYSTORE_PATH in cb startup file to fix issue
+- name: Update CACERT_KEYSTORE_PATH in cb startup file to fix issue of not listening for https traffic
   ansible.builtin.replace:
-    path:  "{{ ( __codebeamer_sym_link ,'bin/cb', ) | path_join }}"
+    path:  "{{ ( __codebeamer_sym_link ,'bin/cb' ) | path_join }}"
     after: "CACERT_KEYSTORE_PATH="
     regexp: '/home/appuser/codebeamer/cacerts'
-    replace: "{{ ( __codebeamer_sym_link ,'cacerts', ) | path_join }}" 
+    replace: "{{ ( __codebeamer_sym_link ,'cacerts' ) | path_join }}" 
+
+
+- name: Copy certificate pfx file so we can create the keystore
+  copy:
+    src: 'files/codebeamer.pfx'
+    dest:  "{{ ( __codebeamer_sym_link ,'tomcat/codebeamer.pfx' ) | path_join }}"
+    owner: codebeamer
+    group: codebeamer
+    mode: 0555
+
+- name: Remove original keystore since we are creating it
+  file:
+    path: "{{ ( __codebeamer_sym_link ,'tomcat/keystore' ) | path_join }}"
+    state: absent  
+
+- name: Create keystore
+  command:
+    cmd: "keytool -importkeystore  -srcstorepass {{ __pxf_password }} -srckeystore {{ ( __codebeamer_sym_link ,'tomcat/codebeamer.pfx' ) | path_join }} -srcstoretype pkcs12 -deststorepass {{ __keystore_password }} -destkeystore {{ ( __codebeamer_sym_link ,'tomcat/keystore' ) | path_join }} -deststoretype pkcs12"
+
+- name: Remove codebeamer.pfx
+  file:
+    path: "{{ ( __codebeamer_sym_link ,'tomcat/codebeamer.pfx' ) | path_join }}"
+    state: absent  
+
+- name: Permit https traffic on port 443 for codebeamer only
+  firewalld:
+    port: '{{ item }}'
+    permanent: yes
+    immediate: yes
+    state: enabled    
+  loop:
+    - '443/tcp'
+    - '{{ __codebeamer_https_port }}/tcp'
+
+- name: Redirect port 443 to codebeamers https port so everyone can enjoy normal https connection rather than specifying the port
+  firewalld:
+    rich_rule: rule family=ipv4 forward-port port=443 protocol=tcp to-port={{ __codebeamer_https_port }}
+    permanent: yes
+    immediate: yes
+    state: enabled    
 
 - name: Enable Codebeamer service
   ansible.builtin.service:
     name: codebeamer
     state: started
     enabled: true
-

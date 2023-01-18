@@ -21,6 +21,7 @@ Create ssh keys required for ansible to use certificates for connections over ss
 ## Update inverntory file
 
 Update the variables etc as required in the inventory file and role files
+Add the Certificate pfx file to the codebeamer role in files name it codebeamer.pfx
 
 ## Running the Playbook
 
@@ -28,13 +29,6 @@ Update the playbook hosts file as required
 ```yaml
   ansible_user: user
   ansible_connection: ssh
-```
-
-## Create Certificate key strings from generated certificate
-```
-   openssl pkcs12 -in "C:\Temp\codebeamer.pfx" -nocerts -nodes -out "c:\Temp\codebeamer.key"
-   openssl rsa -in "c:\Temp\codebeamer.key" -out "c:\Temp\codebeamer.private.key"
-   openssl rsa -in "c:\Temp\codebeamer.key" -pubout -out "c:\Temp\codebeamer.public.key"       
 ```
 
 Command Line to run :-
@@ -49,6 +43,6 @@ ask for privilege escalation password
 <br></br>
 ## ToDo
 ```
-    1. ... Move Data directory https://www.thegeekstuff.com/2016/05/move-mysql-directory/
+    
 ```
 
