@@ -1,0 +1,11 @@
+---
+
+- name: Set SEContext of codebeamer directory
+  sefcontext:
+    target: '{{ __codebeamer_root_dir }}(/.*)?'
+    setype: bin_t
+    state: present
+    
+- name: Run restore context to reload selinux  
+  command: 
+    cmd: 'restorecon -RFvv {{ __codebeamer_root_dir }}'

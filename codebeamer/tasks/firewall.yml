@@ -1,0 +1,18 @@
+---
+
+- name: Permit https traffic on port 443 for codebeamer only
+  firewalld:
+    port: '{{ item }}'
+    permanent: yes
+    immediate: yes
+    state: enabled    
+  loop:
+    - '443/tcp'
+    - '{{ __codebeamer_https_port }}/tcp'
+
+- name: Redirect port 443 to codebeamers https port so everyone can enjoy normal https connection rather than specifying the port
+  firewalld:
+    rich_rule: rule family=ipv4 forward-port port=443 protocol=tcp to-port={{ __codebeamer_https_port }}
+    permanent: yes
+    immediate: yes
+    state: enabled    

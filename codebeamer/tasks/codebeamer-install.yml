@@ -1,0 +1,84 @@
+---
+
+- name: Ensure Codebeamer Root Dirtectory Exists
+  file:
+    path: '{{ __codebeamer_root_dir }}'
+    state: directory
+    owner: codebeamer
+    group: codebeamer
+    mode: 0744
+
+- name: Copy CodeBeamer File to Codebeamer user folder  
+  copy:
+    src: 'files/{{ __codebeamer_installer }}'
+    dest: '/home/codebeamer'
+    owner: codebeamer
+    group: codebeamer
+    mode: 0550
+
+- name: Check if installation exists
+  become: yes
+  become_user: codebeamer
+  stat:
+    path: '{{ __codebeamer_install_dir }}'
+  register: codebeamer_install_status
+
+- name: Extract Contents of binary file
+  become: yes
+  become_user: codebeamer
+  ansible.builtin.expect:
+    command: sh /home/codebeamer/{{ __codebeamer_installer }} --quiet --accept
+    responses:
+      '.*Directory.*:': '{{ __codebeamer_install_dir }}'
+      '.*Do you want to read the CUSTOMER AGREEMENT.*': 'n'
+      '.*Do you agree with the CUSTOMER AGREEMENT.*': 'y'
+      '.*Please enter the TCP/IP portnumber for codebeamer.*': '{{ __codebeamer_http_port }}'
+      '.*Please enter the SSL TCP/IP portnumber for codebeamer.*': '{{ __codebeamer_https_port }}'
+      '.*Please enter the SHUTDOWN portnumber for codebeamer.*': '{{ __codebeamer_shutdown_port }}'
+      '.*Do you want to download MySQL JDBC driver and accept its license.*': 'n'
+      '.*Do you want to upgrade from your existing codebeamer installation.*': 'n'
+      '.*Do you want to start codebeamer setup wizard now.*': 'n'
+  when: not codebeamer_install_status.stat.exists
+
+- name: Create a codebeamer symbolic link
+  become: yes
+  become_user: codebeamer
+  ansible.builtin.file:
+    src: '{{ __codebeamer_install_dir }}'
+    dest: '{{ __codebeamer_sym_link  }}'    
+    state: link
+
+- name: Copy CodeBeamer File to Codebeamer folder
+  copy:
+    src: 'files/{{ __my_sql_connector_name }}'
+    dest: "{{ ( __codebeamer_install_dir ,'tomcat/webapps/cb/WEB-INF/lib', __my_sql_connector_name) | path_join }}"
+    owner: codebeamer
+    group: root
+    mode: 0554
+
+- name: Update CACERT_KEYSTORE_PATH in cb startup file to fix issue of not listening for https traffic
+  ansible.builtin.replace:
+    path:  "{{ ( __codebeamer_sym_link ,'bin/cb' ) | path_join }}"
+    after: "CACERT_KEYSTORE_PATH="
+    regexp: '/home/appuser/codebeamer/cacerts'
+    replace: "{{ ( __codebeamer_sym_link ,'cacerts' ) | path_join }}" 
+
+
+- name: Ensure Git Repository Root Dirtectory Exists
+  file:
+    path: '{{ __git_repository_root_dir }}'
+    state: directory
+    owner: codebeamer
+    group: codebeamer
+    mode: 0644
+
+- name: Create a git repository symbolic link
+  become: yes
+  become_user: codebeamer
+  file:
+    src: '{{ __git_repository_root_dir }}'
+    dest:  "{{ ( __codebeamer_sym_link ,'repository/git' ) | path_join }}"   
+    state: link    
+    owner: codebeamer
+    group: codebeamer
+    mode: 0644

@@ -1,0 +1,15 @@
+---
+
+- name: Copy codebeamer.service to /etc/systemd/system/
+  template:
+    src: "codebeamer.service.cnf.j2"
+    dest: "/etc/systemd/system/codebeamer.service"
+    owner: root
+    group: root
+    mode: 0444
+
+- name: Enable Codebeamer service
+  ansible.builtin.service:
+    name: codebeamer
+    state: started
+    enabled: true

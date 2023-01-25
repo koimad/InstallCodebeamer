@@ -1,0 +1,23 @@
+---
+
+- name: Copy certificate pfx file so we can create the keystore
+  copy:
+    src: 'files/codebeamer.pfx'
+    dest:  "{{ ( __codebeamer_sym_link ,'tomcat/codebeamer.pfx' ) | path_join }}"
+    owner: codebeamer
+    group: codebeamer
+    mode: 0555
+
+- name: Remove original keystore since we are creating it
+  file:
+    path: "{{ ( __codebeamer_sym_link ,'tomcat/keystore' ) | path_join }}"
+    state: absent  
+
+- name: Create keystore
+  command:
+    cmd: "keytool -importkeystore  -srcstorepass {{ __pxf_password }} -srckeystore {{ ( __codebeamer_sym_link ,'tomcat/codebeamer.pfx' ) | path_join }} -srcstoretype pkcs12 -deststorepass {{ __keystore_password }} -destkeystore {{ ( __codebeamer_sym_link ,'tomcat/keystore' ) | path_join }} -deststoretype pkcs12"
+
+- name: Remove codebeamer.pfx
+  file:
+    path: "{{ ( __codebeamer_sym_link ,'tomcat/codebeamer.pfx' ) | path_join }}"
+    state: absent  
