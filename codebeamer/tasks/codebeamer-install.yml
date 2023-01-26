@@ -70,7 +70,7 @@
     state: directory
     owner: codebeamer
     group: codebeamer
-    mode: 0644
+    mode: 0755
 
 - name: Create a git repository symbolic link
   become: yes
@@ -81,4 +81,4 @@
     state: link    
     owner: codebeamer
     group: codebeamer
-    mode: 0644
+    mode: 0755
