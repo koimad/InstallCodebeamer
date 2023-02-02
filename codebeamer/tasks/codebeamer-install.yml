@@ -82,3 +82,12 @@
     owner: codebeamer
     group: codebeamer
     mode: 0755
+
+- name: ensure ssh folder has correct access assigned
+  file:
+    path: '/home/codebeamer/.ssh'
+    state: directory
+    owner: codebeamer
+    group: codebeamer
+    mode: 0700
+      
