@@ -1,0 +1,10 @@
+- name: Update sshd_config to ensure certificate authentication is enabled
+  ansible.builtin.replace:
+    path:  "/etc/ssh/sshd_config"
+    regexp: '#PubkeyAuthentication yes'
+    replace: "PubkeyAuthentication yes" 
+
+- name: Restart service sshd, in all cases
+  ansible.builtin.service:
+    name: sshd
+    state: restarted

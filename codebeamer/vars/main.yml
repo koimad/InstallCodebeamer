@@ -9,5 +9,5 @@ __codebeamer_http_port: 8080
 __codebeamer_https_port: 8443
 __codebeamer_shutdown_port: 8005
 
-__pxf_password: Pass@word10
+__pxf_password: e8154314
 __keystore_password: cb_secret # don't change unless you wan to update the server.xml file with a new password

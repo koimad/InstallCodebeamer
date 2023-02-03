@@ -70,7 +70,7 @@
     state: directory
     owner: codebeamer
     group: codebeamer
-    mode: 0755
+    mode: 0770
 
 - name: Create a git repository symbolic link
   become: yes
@@ -81,7 +81,7 @@
     state: link    
     owner: codebeamer
     group: codebeamer
-    mode: 0755
+    mode: 0770
 
 - name: ensure ssh folder has correct access assigned
   file:

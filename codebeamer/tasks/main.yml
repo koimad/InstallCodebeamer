@@ -11,6 +11,7 @@
 - include_tasks: firewall.yml
 - include_tasks: certificate.yml
 - include_tasks: systemd.yml
+- include_tasks: ssh.yml
 
 
 
