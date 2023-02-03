@@ -38,7 +38,9 @@ Command Line to run :-
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-K reperesents --ask-become-pass: 
 ask for privilege escalation password
 
-
+## Configuring Post installation
+If codebeamer is accessed via port 443 then the email address server will need to be updated to port 8443. If the setup is carried out using port 8443 then this will already be set.
+If this is not carried out it will need to be carried out using application configuration. If this is not do then git over ssh will fail.
 
 <br></br>
 ## ToDo
